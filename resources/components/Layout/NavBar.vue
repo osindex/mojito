@@ -1,12 +1,13 @@
 <template>
   <el-aside :width="isCollapse ? '65px' : '250px'">
     <el-menu
-            class="el-menu-vertical"
-            :collapse="isCollapse"
-            :router="true"
-            background-color="#263238"
-            text-color="#afb5bd"
-            active-text-color="#ffffff">
+      class="el-menu-vertical"
+      :collapse="isCollapse"
+      :router="true"
+      background-color="#263238"
+      text-color="#afb5bd"
+      active-text-color="#ffffff"
+    >
       <div class="logo">
         <div v-if="!isCollapse" class="normal">
           {{ fullName }}
@@ -15,45 +16,55 @@
           {{ abbrName }}
         </div>
       </div>
-      <nav-item v-for="item in this.menuItems" :item="item" :key="item.id"></nav-item>
+      <nav-item v-for="item in this.menuItems" :key="item.id" :item="item" />
     </el-menu>
   </el-aside>
 </template>
 
 <script>
-  import NavItem from './NavItem'
-  import { myMenu } from '../../api/menu'
-  import config from '../../config'
+import NavItem from './NavItem'
+import { myMenu } from '../../api/menu'
+import config from '../../config'
+import { mapActions } from 'vuex'
 
-  export default {
-    name: 'NavBar',
-    components: {
-      NavItem
-    },
-    props: {
-      isCollapse: Boolean
-    },
-    data () {
-      return {
-        menuItems: []
+export default {
+  name: 'NavBar',
+  components: {
+    NavItem
+  },
+  props: {
+    isCollapse: Boolean
+  },
+  data() {
+    return {
+      menuItems: []
+    }
+  },
+  created() {
+    myMenu().then(response => {
+      this.menuItems = response.data.data
+    }).catch(e => {
+      if (e.response.status === 401) {
+        this.logoutHandle(this.$provider).then(this.$router.push({
+          name: config[this.$provider].loginRouteName
+        }))
       }
+    })
+  },
+  methods: {
+    ...mapActions([
+      'logoutHandle'
+    ])
+  },
+  computed: {
+    fullName: function() {
+      return config[this.$provider].hasOwnProperty('appName') ? config[this.$provider].appName.fullName : 'Mojito Admin'
     },
-    created () {
-      myMenu().then(response => {
-        this.menuItems = response.data.data
-      })
-    },
-    methods: {
-    },
-    computed: {
-      fullName: function () {
-         return config[this.$provider].hasOwnProperty('appName') ? config[this.$provider].appName.fullName : 'Mojito Admin'
-      },
-      abbrName: function () {
-        return config[this.$provider].hasOwnProperty('appName') ? config[this.$provider].appName.abbrName : 'Mojito'
-      }
+    abbrName: function() {
+      return config[this.$provider].hasOwnProperty('appName') ? config[this.$provider].appName.abbrName : 'Mojito'
     }
   }
+}
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>

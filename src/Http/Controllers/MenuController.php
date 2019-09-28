@@ -3,12 +3,15 @@
 namespace Moell\Mojito\Http\Controllers;
 
 
+use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Moell\Mojito\Http\Requests\Menu\CreateOrUpdateRequest;
 use Moell\Mojito\Models\Menu;
+use Moell\Mojito\Models\PermissionGroup;
 use Moell\Mojito\Resources\Menu as MenuResource;
-use Auth;
 use SMartins\PassportMultiauth\Config\AuthConfigHelper;
+use Spatie\Permission\Models\Permission;
 
 class MenuController extends Controller
 {
@@ -33,7 +36,66 @@ class MenuController extends Controller
      */
     public function store(CreateOrUpdateRequest $request)
     {
-        Menu::create($request->all());
+        $menu = Menu::create($request->all());
+        $folder = ltrim($menu->uri, '/');
+        // mkdir
+        $dir = resource_path('js/views/admin/' . $folder);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        // get component name
+        $comNameArray = explode("/", $folder);
+        $comName = Arr::last($comNameArray);
+
+        $baseRoutes = resource_path('js/router/routers.js');
+
+        // callback
+        $closure = function ($line) use ($comName) {
+            return rtrim($line, PHP_EOL) . ', ...' . $comName . PHP_EOL;
+        };
+        // change baseRoute
+        recodeFile($baseRoutes, ['...adminDashboard'], ["import adminDashboard from '../views/admin/dashboard/routes'", ["import adminDashboard from '../views/admin/dashboard/routes'" . PHP_EOL . "import " . $comName . " from '../views/admin/" . $folder . "/routes'"]], $baseRoutes, null, $closure);
+
+        // create new files
+        $compRoutes = resource_path('js/views/admin/example/routes.js');
+        $toRoutes = resource_path('js/views/admin/' . $folder . '/routes.js');
+
+        $permission_name = $menu->permission_name ?: $comName . ".index";
+        $closureCom = function ($line) use ($permission_name) {
+            return "      permission: '" . $permission_name . "'" . PHP_EOL;
+        };
+        recodeFile($compRoutes, 'example.index', ["example", [$comName, $folder, $comName]], $toRoutes, null, $closureCom);
+
+        $vueFile = resource_path('js/views/admin/example/index.vue');
+        $tovueFile = resource_path('js/views/admin/' . $folder . '/index.vue');
+        recodeFile($vueFile, null, ["example", [$comName, $comName, $comName, $comName, $comName]], $tovueFile, null, null);
+
+        $langFile = resource_path('js/lang/' . config('app.locale') . '.js');
+
+        $closureLang = function ($line) use ($comName, $menu) {
+            return $line . '            ' . $comName . ": '" . $menu->name . "'," . PHP_EOL;
+        };
+        recodeFile($langFile, 'roleAssignPermission', [], $langFile, null, $closureLang);
+
+        // auto permission
+        $pg_id = 0;
+        if ($folder === $comName) {
+            $pg_id = PermissionGroup::insertGetId(['name' => $comName]);
+        } else {
+            $pg_id = optional(Permission::where('name', 'like', $comNameArray[0] . '%')->first())->pg_id;
+        }
+        $permission = [
+            'guard_name' => config('mojito.super_admin.guard'),
+            'name' => $permission_name,
+            'display_name' => $menu->name,
+            'icon' => $menu->icon,
+            'pg_id' => $pg_id ?? 1, //if not set 1
+        ];
+        $perm = Permission::create($permission);
+
+        $role = Auth::user()->roles->first();
+        $role->givePermissionTo($perm);
 
         return $this->created();
     }
@@ -94,7 +156,7 @@ class MenuController extends Controller
 
         if (Menu::query()->where('parent_id', $menu->id)->count()) {
             return $this->unprocesableEtity([
-                'parent_id' => 'Please delete the submenu first.'
+                'parent_id' => 'Please delete the submenu first.',
             ]);
         }
 

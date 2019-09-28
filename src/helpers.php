@@ -1,4 +1,31 @@
 <?php
+use Illuminate\Support\Str;
+if (!function_exists('recodeFile')) {
+    function recodeFile($path, $avoid = [], $replace = [], $to = null, $append = null, $avoidFunc = null)
+    {
+        $content = '';
+        $fp = new SplFileObject($path, 'r+');
+        if ($fp) {
+            while (!$fp->eof()) {
+                $fp->next();
+                $line = $fp->current();
+                if (!Str::contains($line, $avoid)) {
+                    $content .= $line;
+                } elseif ($avoidFunc) {
+                    $content .= $avoidFunc($line);
+                }
+            }
+            if (count($replace)) {
+                $content = Str::replaceArray($replace[0], $replace[1], $content);
+            }
+            if ($to) {
+                $fp = new SplFileObject($to, 'w+');
+                $fp->fwrite(rtrim($content) . $append);
+            }
+        }
+        return $content;
+    }
+}
 
 if (!function_exists('request_intersect')) {
     /**
@@ -28,7 +55,7 @@ if (!function_exists('make_tree')) {
         foreach ($list as $k => $v) {
             $newList[$v['id']] = $v;
         }
-        
+
         foreach ($newList as $value) {
             if ($parentId == $value['parent_id']) {
                 $tree[] = &$newList[$value['id']];
