@@ -2,7 +2,6 @@
 
 namespace Moell\Mojito\Http\Controllers;
 
-
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -47,41 +46,47 @@ class MenuController extends Controller
         // get component name
         $comNameArray = explode("/", $folder);
         $comName = Arr::last($comNameArray);
-
-        $baseRoutes = resource_path('js/router/routers.js');
-
-        // callback
-        $closure = function ($line) use ($comName) {
-            return rtrim($line, PHP_EOL) . ', ...' . $comName . PHP_EOL;
-        };
-        // change baseRoute
-        recodeFile($baseRoutes, ['...adminDashboard'], ["import adminDashboard from '../views/admin/dashboard/routes'", ["import adminDashboard from '../views/admin/dashboard/routes'" . PHP_EOL . "import " . $comName . " from '../views/admin/" . $folder . "/routes'"]], $baseRoutes, null, $closure);
+        $permission_name = $menu->permission_name ?: $comName . ".index";
 
         // create new files
-        $compRoutes = resource_path('js/views/admin/example/routes.js');
         $toRoutes = resource_path('js/views/admin/' . $folder . '/routes.js');
-
-        $permission_name = $menu->permission_name ?: $comName . ".index";
-        $closureCom = function ($line) use ($permission_name) {
-            return "      permission: '" . $permission_name . "'" . PHP_EOL;
-        };
-        recodeFile($compRoutes, 'example.index', ["example", [$comName, $folder, $comName]], $toRoutes, null, $closureCom);
-
-        $vueFile = resource_path('js/views/admin/example/index.vue');
+        if (!file_exists($toRoutes)) {
+            $closureCom = function ($line) use ($permission_name) {
+                return "      permission: '" . $permission_name . "'" . PHP_EOL;
+            };
+            $compRoutes = resource_path('js/views/admin/example/routes.js');
+            recodeFile($compRoutes, 'example.index', ["example", [$comName, $folder, $comName]], $toRoutes, null, $closureCom);
+        }
         $tovueFile = resource_path('js/views/admin/' . $folder . '/index.vue');
-        recodeFile($vueFile, null, ["example", [$comName, $comName, $comName, $comName, $comName]], $tovueFile, null, null);
+        if (!file_exists($tovueFile)) {
+            $vueFile = resource_path('js/views/admin/example/index.vue');
+            recodeFile($vueFile, null, ["example", [$comName, $comName, $comName, $comName, $comName]], $tovueFile, null, null);
+        }
 
         $langFile = resource_path('js/lang/' . config('app.locale') . '.js');
-
-        $closureLang = function ($line) use ($comName, $menu) {
-            return $line . '            ' . $comName . ": '" . $menu->name . "'," . PHP_EOL;
-        };
-        recodeFile($langFile, 'roleAssignPermission', [], $langFile, null, $closureLang);
-
+        $langFileContent = recodeFile($langFile);
+        $insertLang = '            ' . $comName . ": '" . $menu->name . "'," . PHP_EOL;
+        if (strpos($langFileContent, '            ' . $comName . ": '") === false) {
+            $closureLang = function ($line) use ($insertLang) {
+                return $line . $insertLang;
+            };
+            recodeFile($langFile, 'roleAssignPermission', [], $langFile, null, $closureLang);
+        }
+        // change baseRoute
+        $baseRoutes = resource_path('js/router/routers.js');
+        $baseRoutesFileContent = recodeFile($baseRoutes);
+        if (strpos($baseRoutesFileContent, "import " . $comName . " from") === false) {
+            // callback
+            $closure = function ($line) use ($comName) {
+                return rtrim($line, PHP_EOL) . ', ...' . $comName . PHP_EOL;
+            };
+            recodeFile($baseRoutes, ['...adminDashboard'], ["import adminDashboard from '../views/admin/dashboard/routes'", ["import adminDashboard from '../views/admin/dashboard/routes'" . PHP_EOL . "import " . $comName . " from '../views/admin/" . $folder . "/routes'"]], $baseRoutes, null, $closure);
+        }
         // auto permission
         $pg_id = 0;
         if ($folder === $comName) {
-            $pg_id = PermissionGroup::insertGetId(['name' => $comName]);
+            // $pg_id = PermissionGroup::insertGetId(['name' => $comName]);
+            $pg_id = PermissionGroup::firstOrCreate(['name' => $comName])->id;
         } else {
             $pg_id = optional(Permission::where('name', 'like', $comNameArray[0] . '%')->first())->pg_id;
         }
@@ -90,9 +95,9 @@ class MenuController extends Controller
             'name' => $permission_name,
             'display_name' => $menu->name,
             'icon' => $menu->icon,
-            'pg_id' => $pg_id ?? 1, //if not set 1
+            'pg_id' => $pg_id ?: 1, //if not set 1
         ];
-        $perm = Permission::create($permission);
+        $perm = Permission::updateOrCreate(['name' => $permission_name], $permission);
 
         $role = Auth::user()->roles->first();
         $role->givePermissionTo($perm);
