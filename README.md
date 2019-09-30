@@ -39,9 +39,19 @@ Mojito is a backend management system based on Laravel, Vue, Element.
 
 First install laravel and make sure you have the correct database connection configured.
 
+vcs:
 ```
-composer require moell/mojito
+    "repositories": [{
+        "type": "vcs",
+        "url": "https://github.com/osindex/mojito.git"
+    }]
 ```
+
+```
+composer require "moell/mojito":"dev-mix"
+
+```
+
 > If there is a conflict caused by the `random_compat` version, manually add `moell/mojito` to composer.json and then `composer update` to install.
 
 Then run the following command to publish the resource:
@@ -100,16 +110,11 @@ Passport installation and configuration
 php artisan passport:install
 ```
 
-After successful execution, obtain the corresponding password to grant the client's ID and secret and configure it to the corresponding `resources/config/index.js` :
+After successful execution, obtain the corresponding password to grant the client's ID and secret and configure it to the corresponding `.env`:
 
 ```
-export default {
-  admin: {
-    authorize: {
-      clientId: ID,
-      clientSecret: secret
-    }
-}
+MIX_CLIENT_ID=2
+MIX_CLIENT_SECRET=AtejVSZclgemDnvtRZ1Rns576tPNmzYhpIgtT1eP
 ```
 
 Install JavaScript Dependencies
@@ -139,9 +144,9 @@ Log in
 
 url: http://localhost/mojito#/admin/login
 
-email: admin@gmail.com
+email: admin@admin.com
 
-password: secret
+password: password
 
 ## Dependent on open source software
 

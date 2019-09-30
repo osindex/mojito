@@ -116,6 +116,7 @@ class MenuController extends Controller
         $userPermissions = Auth::user()->getAllPermissions()->pluck('name');
         $menus = Menu::query()
             ->where('guard_name', $guardName)
+            ->where('is_display', true)
             ->orderBy('sequence', 'desc')
             ->get()
             ->filter(function ($item) use ($userPermissions) {

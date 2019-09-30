@@ -22,7 +22,7 @@
       return {
         ruleForm: {
           username: 'admin@admin.com',
-          password: 'secret'
+          password: 'password'
         },
         rules: {
           username: [

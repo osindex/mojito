@@ -23,6 +23,8 @@ class CreateMenuTable extends Migration
             $table->string('name');
             $table->string('guard_name', 30);
             $table->smallInteger('sequence')->default(0);
+            $table->boolean('is_display')->default(true);
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

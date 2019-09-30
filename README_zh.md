@@ -35,8 +35,15 @@ Mojito 是一个基于 Laravel, Vue, Element构建的后台管理系统。
 
 首先安装laravel,并且确保你配置了正确的数据库连接。
 
+然后在composer.json 配置vcs:
 ```
-composer require moell/mojito
+    "repositories": [{
+        "type": "vcs",
+        "url": "https://github.com/osindex/mojito.git"
+    }]
+```
+```
+composer require "moell/mojito":"dev-mix"
 ```
 > 如果出现 `random_compat` 版本造成的冲突，请手动将 `moell/mojito` 加入 composer.json ，然后执行 `composer update`  进行安装。
 
@@ -131,9 +138,9 @@ npm run production
 
 url: http://localhost/mojito#/admin/login
 
-email: admin@gmail.com
+email: admin@admin.com
 
-password: secret
+password: password
 
 ## 依赖开源软件
 

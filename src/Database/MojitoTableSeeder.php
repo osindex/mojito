@@ -217,7 +217,7 @@ class MojitoTableSeeder extends Seeder
         AdminUserFactory::adminUser()->create([
             'name' => 'admin',
             'email' => 'admin@admin.com',
-            'password' => bcrypt('secret'), //'$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
+            'password' => bcrypt('password'),
         ]);
     }
 
