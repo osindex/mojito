@@ -4,23 +4,25 @@ if (!function_exists('recodeFile')) {
     function recodeFile($path, $avoid = [], $replace = [], $to = null, $append = null, $avoidFunc = null)
     {
         $content = '';
-        $fp = new SplFileObject($path, 'r+');
-        if ($fp) {
-            while (!$fp->eof()) {
-                $fp->next();
-                $line = $fp->current();
-                if (!Str::contains($line, $avoid)) {
-                    $content .= $line;
-                } elseif ($avoidFunc) {
-                    $content .= $avoidFunc($line);
+        if (file_exists($path)) {
+            $fp = new SplFileObject($path, 'r+');
+            if ($fp) {
+                while (!$fp->eof()) {
+                    $fp->next();
+                    $line = $fp->current();
+                    if (!Str::contains($line, $avoid)) {
+                        $content .= $line;
+                    } elseif ($avoidFunc) {
+                        $content .= $avoidFunc($line);
+                    }
                 }
-            }
-            if (count($replace)) {
-                $content = Str::replaceArray($replace[0], $replace[1], $content);
-            }
-            if ($to) {
-                $fp = new SplFileObject($to, 'w+');
-                $fp->fwrite(rtrim($content) . $append);
+                if (count($replace)) {
+                    $content = Str::replaceArray($replace[0], $replace[1], $content);
+                }
+                if ($to) {
+                    $fp = new SplFileObject($to, 'w+');
+                    $fp->fwrite(rtrim($content) . $append);
+                }
             }
         }
         return $content;
@@ -34,7 +36,8 @@ if (!function_exists('request_intersect')) {
      * @param $keys
      * @return array|ø
      */
-    function request_intersect($keys) {
+    function requestIntersect($keys)
+    {
         return array_filter(request()->only(is_array($keys) ? $keys : func_get_args()));
     }
 }
@@ -45,7 +48,8 @@ if (!function_exists('make_tree')) {
      * @param int $parentId
      * @return array
      */
-    function make_tree(array $list, $parentId = 0) {
+    function makeTree(array $list, $parentId = 0)
+    {
         $tree = [];
         if (empty($list)) {
             return $tree;
