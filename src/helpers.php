@@ -36,7 +36,7 @@ if (!function_exists('request_intersect')) {
      * @param $keys
      * @return array|ø
      */
-    function requestIntersect($keys)
+    function request_intersect($keys)
     {
         return array_filter(request()->only(is_array($keys) ? $keys : func_get_args()));
     }
@@ -48,7 +48,7 @@ if (!function_exists('make_tree')) {
      * @param int $parentId
      * @return array
      */
-    function makeTree(array $list, $parentId = 0)
+    function make_tree(array $list, $parentId = 0)
     {
         $tree = [];
         if (empty($list)) {
