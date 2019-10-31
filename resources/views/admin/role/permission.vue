@@ -70,9 +70,9 @@
         let rolePermissions = rolePermission(this.$route.params.id)
 
         Promise.all([permissionGroups, rolePermissions]).then( result => {
-          this.guardNameByPermissions  = result[0].data.data
+          this.guardNameByPermissions  = result[0].data
 
-          result[0].data.data.forEach(item => {
+          result[0].data.forEach(item => {
             if (!this.groupPermissions.hasOwnProperty(item.id)) {
               this.groupPermissions[item.id] = []
             }
@@ -81,7 +81,7 @@
             })
           })
 
-          result[1].data.data.forEach(item => {
+          result[1].data.forEach(item => {
             this.rolePermissions.push(item.name)
           })
         })

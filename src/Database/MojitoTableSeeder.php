@@ -6,8 +6,8 @@ use Illuminate\Database\Seeder;
 use Moell\Mojito\AdminUserFactory;
 use Moell\Mojito\Models\Menu;
 use Moell\Mojito\Models\PermissionGroup;
+use Moell\Mojito\Models\Role;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class MojitoTableSeeder extends Seeder
 {
@@ -85,6 +85,21 @@ class MojitoTableSeeder extends Seeder
         [
             'name' => 'role.guard-name-roles',
             'display_name' => 'Specify the role of guard name',
+            'pg_id' => 2,
+        ],
+        [
+            'name' => 'role.menus',
+            'display_name' => 'role menus',
+            'pg_id' => 2,
+        ],
+        [
+            'name' => 'role.assign-menus',
+            'display_name' => 'role assign menus',
+            'pg_id' => 2,
+        ],
+        [
+            'name' => 'role.toggle-menus',
+            'display_name' => 'role toggle-menus',
             'pg_id' => 2,
         ],
         [
@@ -192,21 +207,25 @@ class MojitoTableSeeder extends Seeder
      */
     public function run()
     {
-        app()['cache']->forget('spatie.permission.cache');
+        if (!AdminUserFactory::adminUser()->first()) {
 
-        $this->createdAdminUser();
+            app()['cache']->forget('spatie.permission.cache');
 
-        $this->createPermissionGroup();
+            $this->createdAdminUser();
 
-        $this->createRole();
+            $this->createPermissionGroup();
 
-        $this->createPermission();
+            $this->createRole();
 
-        $this->createMenu();
+            $this->createPermission();
 
-        $this->associateRolePermissions();
+            $this->createMenu();
+
+            $this->associateRolePermissions();
+
+            $this->associateRoleMenus();
+        }
     }
-
     /**
      * @author moell<moel91@foxmail.com>
      */
@@ -277,7 +296,7 @@ class MojitoTableSeeder extends Seeder
      */
     private function createMenu()
     {
-        Menu::truncate();
+        Menu::query()->delete();
         Menu::insert([
             [
                 'id' => 1,
@@ -351,5 +370,13 @@ class MojitoTableSeeder extends Seeder
         foreach ($this->permissions as $permission) {
             $role->givePermissionTo($permission['name']);
         }
+    }
+    /**
+     * osindex<yaoiluo@gmail.com>
+     */
+    private function associateRoleMenus()
+    {
+        $role = Role::first();
+        $role->menus()->toggle(Menu::pluck('id'));
     }
 }

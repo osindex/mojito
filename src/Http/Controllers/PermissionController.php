@@ -2,14 +2,13 @@
 
 namespace Moell\Mojito\Http\Controllers;
 
-
+use Auth;
 use Illuminate\Http\Request;
 use Moell\Mojito\Http\Requests\Permission\CreateOrUpdateRequest;
-use Moell\Mojito\Resources\PermissionCollection;
-use Spatie\Permission\Exceptions\PermissionAlreadyExists;
 use Moell\Mojito\Models\Permission;
 use Moell\Mojito\Resources\Permission as PermissionResource;
-use Auth;
+use Moell\Mojito\Resources\PermissionCollection;
+use Spatie\Permission\Exceptions\PermissionAlreadyExists;
 
 class PermissionController extends Controller
 {
@@ -20,9 +19,9 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
-        $permissions =tap(Permission::latest(), function ($query) {
+        $permissions = tap(Permission::latest(), function ($query) {
             $query->where(request_intersect([
-                'name', 'guard_name', 'pg_id'
+                'name', 'guard_name', 'pg_id',
             ]));
         })->with('group')->paginate();
 
@@ -47,7 +46,7 @@ class PermissionController extends Controller
     public function store(CreateOrUpdateRequest $request)
     {
         $attributes = $request->only([
-            'pg_id', 'name', 'guard_name', 'display_name', 'icon', 'sequence', 'description'
+            'pg_id', 'name', 'guard_name', 'display_name', 'icon', 'sequence', 'description',
         ]);
         $attributes['created_name'] = Auth::user()->name;
 
@@ -67,7 +66,7 @@ class PermissionController extends Controller
         $permission = Permission::query()->findOrFail($id);
 
         $attributes = $request->only([
-            'pg_id', 'name', 'guard_name', 'display_name', 'icon', 'sequence', 'description'
+            'pg_id', 'name', 'guard_name', 'display_name', 'icon', 'sequence', 'description',
         ]);
 
         $attributes['updated_name'] = Auth::user()->name;

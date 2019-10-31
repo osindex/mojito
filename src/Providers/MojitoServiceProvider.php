@@ -67,6 +67,7 @@ class MojitoServiceProvider extends ServiceProvider
             'add_custom_field_permission_tables.php',
             'create_menu_table.php',
             'create_permission_group_table.php',
+            'create_role_menu_table.php',
         ];
 
         $paths = [];

@@ -17,6 +17,8 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>{{ admin.name }}({{admin.email}}) </el-dropdown-item>
+
               <el-dropdown-item @click.native="openDialogChangePasswordForm">{{ $t('changePassword') }} </el-dropdown-item>
               <el-dropdown-item @click.native="logout">{{ $t('logout') }}</el-dropdown-item>
             </el-dropdown-menu>
@@ -55,7 +57,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+  import { mapActions,mapGetters } from 'vuex'
   import config from '../../config'
   import { changePassword } from '../../api/changePassword'
   import notify from '../../libs/notify'
@@ -136,6 +138,7 @@
       showAuthorGitHubUrl () {
         return config.showAuthorGitHubUrl
       },
+      ...mapGetters(['admin'])
     }
   }
 </script>

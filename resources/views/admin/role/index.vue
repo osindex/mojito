@@ -36,7 +36,7 @@
       </el-table-column>
       <el-table-column
               fixed="right"
-              width="300px"
+              width="310px"
               :label="$t('actions')"
               >
         <template slot-scope="scope">
@@ -48,6 +48,11 @@
             <el-button
                     v-if="assignPermission"
                     size="mini">{{ $t('assignPermission') }}</el-button>
+          </router-link>
+          <router-link :to="{ name: 'roleMenu', params: {id: scope.row.id, guardName: scope.row.guard_name}}">
+            <el-button
+                    v-if="assignMenu"
+                    size="mini">{{ $t('assignMenu') }}</el-button>
           </router-link>
           <el-button
                   v-if="deletePermission"
@@ -108,7 +113,8 @@
   import { responseDataFormat, tableDefaultData, editSuccess, addSuccess, deleteSuccess } from '../../../libs/tableDataHandle'
   import { hasPermission } from '../../../libs/permission'
   import GuardSelect from '../../../components/Select/Guard'
-  import { queryParams } from "../../../mixins/queryParams"
+  import queryParams from '@/mixins/queryParams'
+
 
   export default {
     name: 'roleIndex',
@@ -199,6 +205,9 @@
       },
       assignPermission: function () {
         return hasPermission('role.assign-permissions')
+      },
+      assignMenu: () => {
+        return hasPermission('role.assign-menus')
       }
     },
     created() {

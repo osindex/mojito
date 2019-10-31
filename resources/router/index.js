@@ -39,6 +39,7 @@ router.beforeEach((to, from, next) => {
             }
             resolve()
           }
+          store.dispatch('getMe')
         }).catch(error => {
           reject(error)
         })

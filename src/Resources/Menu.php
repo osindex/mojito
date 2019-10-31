@@ -2,7 +2,6 @@
 
 namespace Moell\Mojito\Resources;
 
-
 use Illuminate\Http\Resources\Json\Resource;
 
 class Menu extends Resource
@@ -16,8 +15,8 @@ class Menu extends Resource
             'icon' => $this->icon,
             'uri' => $this->uri,
             'is_link' => $this->is_link,
-            'created_at' => (string)$this->created_at,
-            'updated_at' => (string)$this->updated_at
+            'created_at' => (string) $this->created_at,
+            'updated_at' => (string) $this->updated_at,
         ];
     }
 }

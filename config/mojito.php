@@ -18,8 +18,8 @@ return [
 
     'multi_auth_guards' => env('MOJITO_MULTI_AUTH_GUARDS'),
 
-    'admin_route_path' => env('ADMIN_ROUTE_PATH', 'mojito'),
+    'admin_route_path' => env('ADMIN_ROUTE_PATH', 'admin'),
 
-    'access_route' => ['permission.all-user-permission', 'menu.my'],
+    'access_route' => ['permission.all-user-permission', 'menu.my', 'admin-user.me'],
 
 ];

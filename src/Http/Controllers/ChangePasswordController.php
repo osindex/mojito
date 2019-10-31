@@ -2,7 +2,6 @@
 
 namespace Moell\Mojito\Http\Controllers;
 
-
 use Auth;
 use Hash;
 use Moell\Mojito\Http\Requests\ChangePasswordRequest;
@@ -18,9 +17,9 @@ class ChangePasswordController extends Controller
     {
         $user = Auth::user();
 
-        if (! Hash::check($request->old_password, $user->password)) {
+        if (!Hash::check($request->old_password, $user->password)) {
             return $this->unprocesableEtity([
-                'password' => 'Incorrect password'
+                'password' => 'Incorrect password',
             ]);
         }
 

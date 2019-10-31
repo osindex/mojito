@@ -7,29 +7,33 @@ $router->namespace('\Moell\Mojito\Http\Controllers')
     ->middleware(['api', config('mojito.super_admin.auth'), 'mojito.permission'])
     ->group(function ($router) {
         $router->resource('role', 'RoleController', ['only' =>
-            ['index', 'show', 'store', 'update', 'destroy']
+            ['index', 'show', 'store', 'update', 'destroy'],
         ]);
 
         $router->get('role/{id}/permissions', 'RoleController@permissions')->name('role.permissions');
 
         $router->put('role/{id}/permissions', 'RoleController@assignPermissions')->name('role.assign-permissions');
+        $router->get('role/{id}/menus', 'RoleController@menus')->name('role.menus');
+        $router->put('role/{id}/menus', 'RoleController@assignMenus')->name('role.assign-menus');
+        $router->put('role/{id}/togglemenus', 'RoleController@toggleMenus')->name('role.toggle-menus');
 
         $router->get('guard-name-roles/{guardName}', 'RoleController@guardNameRoles')->name('role.guard-name-roles');
 
         $router->resource('permission', 'PermissionController', ['only' =>
-            ['index', 'show', 'store', 'update', 'destroy']
+            ['index', 'show', 'store', 'update', 'destroy'],
         ]);
 
         $router->resource('admin-user', 'AdminUserController', ['only' =>
-            ['index', 'show', 'store', 'update', 'destroy']
+            ['index', 'show', 'store', 'update', 'destroy'],
         ]);
+        $router->get('admin-mine', 'AdminUserController@me')->name('admin-user.me');
 
         $router->get('admin-user/{id}/roles/{provider}', 'AdminUserController@roles')->name('admin-user.roles');
 
         $router->put('admin-user/{id}/roles/{provider}', 'AdminUserController@assignRoles')->name('admin-user.assign-roles');
 
         $router->resource('permission-group', 'PermissionGroupController', ['only' =>
-            ['index', 'show', 'store', 'update', 'destroy']
+            ['index', 'show', 'store', 'update', 'destroy'],
         ]);
 
         $router->get('guard-name-for-permissions/{guardName}', 'PermissionGroupController@guardNameForPermissions')
@@ -38,7 +42,7 @@ $router->namespace('\Moell\Mojito\Http\Controllers')
         $router->get("permission-group-all", "PermissionGroupController@all")->name("permission-group.all");
 
         $router->resource('menu', 'MenuController', ['only' =>
-            ['index', 'show', 'store', 'update', 'destroy']
+            ['index', 'show', 'store', 'update', 'destroy'],
         ]);
 
     });

@@ -1,4 +1,4 @@
-export default {
+let lang = {
     meta: {
         title: {
             dashboard: 'Dashboard',
@@ -9,6 +9,7 @@ export default {
             permissionGroup: "Permission Group",
             menu: 'Menu',
             roleAssignPermission: 'Role assignment authority',
+            roleAssignMenu: 'Role assignment menu',
         }
     },
     closeButton: {
@@ -54,11 +55,26 @@ export default {
     topMenu: 'Top menu',
     assignPermission: 'Assign permission',
     assignRole: 'Assign role',
+    assignMenu: 'Assign Menu',
     selectAll: 'Select all',
     unselectAll: 'Unselect all',
     changePassword: 'Change password',
     logout: 'Logout',
     display: 'Display',
+    globalDisplay: 'global display',
     yes: 'Yes',
-    no: 'No'
+    no: 'No',
+    fail: 'Fail',
+    error: 'Error',
+    areyou: 'Are you',
+    createError: 'Create Fail',
+    editError: 'Edit Fail',
+    deleteError: 'Delete Fail',
+    notice: 'Notice',
+    plsselect: 'Please select',
+    delbatch: 'Del Done',
+    input: 'Input',
+    done: 'Done',
+    refresh: 'Refresh',
 }
+export default lang

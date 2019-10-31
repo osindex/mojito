@@ -2,13 +2,12 @@
 
 namespace Moell\Mojito\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use Moell\Mojito\Http\Requests\PermissionGroup\CreateOrUpdateRequest;
-use Moell\Mojito\Models\PermissionGroup;
 use Moell\Mojito\Models\Permission;
-use Moell\Mojito\Resources\PermissionGroupCollection;
+use Moell\Mojito\Models\PermissionGroup;
 use Moell\Mojito\Resources\PermissionGroup as PermissionGroupResource;
+use Moell\Mojito\Resources\PermissionGroupCollection;
 
 class PermissionGroupController extends Controller
 {
@@ -48,12 +47,12 @@ class PermissionGroupController extends Controller
             ->with(['permission' => function ($query) use ($guardName) {
                 $query->where('guard_name', $guardName);
             }])
-            ->get()->filter(function($item)  {
-                return count($item->permission) > 0;
-            });
+            ->get()->filter(function ($item) {
+            return count($item->permission) > 0;
+        });
 
         return response()->json([
-            'data' => array_values($permissionGroups->toArray())
+            'data' => array_values($permissionGroups->toArray()),
         ]);
     }
 
@@ -88,7 +87,7 @@ class PermissionGroupController extends Controller
     public function update(CreateOrUpdateRequest $request, $id)
     {
         PermissionGroup::findOrFail($id)->update(request_intersect([
-            'name'
+            'name',
         ]));
 
         return $this->noContent();
@@ -104,7 +103,7 @@ class PermissionGroupController extends Controller
 
         if (Permission::query()->where('pg_id', $permissionGroup->id)->count()) {
             return $this->unprocesableEtity([
-                'pg_id' => 'Please move or delete the vesting permission.'
+                'pg_id' => 'Please move or delete the vesting permission.',
             ]);
         }
 

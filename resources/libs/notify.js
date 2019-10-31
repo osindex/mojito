@@ -19,6 +19,10 @@ class Notify {
   deleteSuccess(th) {
     this.success(th.$t('deleteSuccess'), th)
   }
+  
+  doneSuccess(th) {
+    this.success(th.$t('done'), th)
+  }
 }
 
 export default new Notify

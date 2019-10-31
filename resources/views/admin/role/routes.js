@@ -21,6 +21,16 @@ export default [
         component: resolve => void(require(['./permission.vue'], resolve)),
       },
       {
+        name: 'roleMenu',
+        path: 'assign-menus/:id/:guardName',
+        meta: {
+          provider: 'admin',
+          title: 'roleAssignMenu',
+          permission: 'role.assign-menus'
+        },
+        component: resolve => void(require(['./menu.vue'], resolve)),
+      },
+      {
         name: 'roleIndex',
         path: '',
         meta: {

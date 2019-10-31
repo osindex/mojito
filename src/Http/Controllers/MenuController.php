@@ -114,18 +114,17 @@ class MenuController extends Controller
         $guardName = AuthConfigHelper::getUserGuard(Auth::user());
 
         $userPermissions = Auth::user()->getAllPermissions()->pluck('name');
-        $menus = Menu::query()
+        $menus = Auth::user()->roles->flatMap(function ($role) {
+            return $role->menus;
+        })
             ->where('guard_name', $guardName)
             ->where('is_display', true)
-            ->orderBy('sequence', 'desc')
-            ->get()
+            ->sortByDesc('sequence')
             ->filter(function ($item) use ($userPermissions) {
                 return !$item->permission_name || $userPermissions->contains($item->permission_name);
             });
-
         return response()->json(['data' => make_tree($menus->toArray())]);
     }
-
     /**
      * @author moell<moell91@foxmail.com>
      * @param CreateOrUpdateRequest $request

@@ -1,4 +1,4 @@
-export default {
+let lang = {
     meta: {
         title: {
             dashboard: '控制面板',
@@ -9,6 +9,7 @@ export default {
             permissionGroup: '权限组',
             menu: '菜单',
             roleAssignPermission: '角色分配权限',
+            roleAssignMenu: '角色分配菜单',
         }
     },
     closeButton: {
@@ -54,11 +55,26 @@ export default {
     topMenu: '顶级菜单',
     assignPermission: '分配权限',
     assignRole: '分配角色',
+    assignMenu: '分配菜单',
     selectAll: '全选',
     unselectAll: '全不选',
     changePassword: '修改密码',
     logout: '退出',
     display: '显示',
+    globalDisplay: '全局显示',
     yes: '是',
-    no: '否'
+    no: '否',
+    fail: '失败',
+    error: '错误',
+    areyou: '是否确认',
+    createError: '创建失败',
+    editError: '编辑失败',
+    deleteError: '删除失败',
+    notice: '提示',
+    plsselect: '请选择需要操作的项目',
+    delbatch: '批量删除成功',
+    input: '输入',
+    done: '完成操作',
+    refresh: '刷新',
 }
+export default lang
