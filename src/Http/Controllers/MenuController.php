@@ -115,11 +115,10 @@ class MenuController extends Controller
 
         $userPermissions = Auth::user()->getAllPermissions()->pluck('name');
         $menus = Auth::user()->roles->flatMap(function ($role) {
-            return $role->menus;
+            return $role->menus()->orderBy('sequence', 'desc')->orderBy('id')->get();
         })
             ->where('guard_name', $guardName)
             ->where('is_display', true)
-            ->sortByDesc('sequence')
             ->filter(function ($item) use ($userPermissions) {
                 return !$item->permission_name || $userPermissions->contains($item->permission_name);
             });
