@@ -1,13 +1,13 @@
 <template>
   <el-aside :width="isCollapse ? '65px' : '250px'">
     <el-menu
-      class="el-menu-vertical"
-      :collapse="isCollapse"
-      :router="true"
-      background-color="#263238"
-      text-color="#afb5bd"
-      active-text-color="#ffffff"
-    >
+            class="el-menu-vertical"
+            :collapse="isCollapse"
+            :router="true"
+            background-color="#263238"
+            text-color="#afb5bd"
+            :collapse-transition="false"
+            active-text-color="#ffffff">
       <div class="logo">
         <div v-if="!isCollapse" class="normal">
           {{ fullName }}

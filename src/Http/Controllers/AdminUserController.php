@@ -141,6 +141,6 @@ class AdminUserController extends Controller
      */
     private function getProviderModel($provider)
     {
-        return app(config('auth.providers.' . $provider . '.model'));
+        return app(config('mojito.providers.' . $provider . '.model'));
     }
 }

@@ -4,13 +4,11 @@ namespace Moell\Mojito\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Moell\Mojito\Http\Requests\Menu\CreateOrUpdateRequest;
 use Moell\Mojito\Models\Menu;
 use Moell\Mojito\Models\PermissionGroup;
 use Moell\Mojito\Resources\Menu as MenuResource;
-use SMartins\PassportMultiauth\Config\AuthConfigHelper;
-use Spatie\Permission\Models\Permission;
 
 class MenuController extends Controller
 {
@@ -109,9 +107,9 @@ class MenuController extends Controller
      * @author moell<moell91@foxmail.com>
      * @return \Illuminate\Http\JsonResponse
      */
-    public function my()
+    public function my(Request $request)
     {
-        $guardName = AuthConfigHelper::getUserGuard(Auth::user());
+        $guardName = data_get(Auth::user()->currentAccessToken(), "name", "admin");
 
         $userPermissions = Auth::user()->getAllPermissions()->pluck('name');
         $menus = Auth::user()->roles->flatMap(function ($role) {

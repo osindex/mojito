@@ -2,7 +2,9 @@
 
 namespace Moell\Mojito\Tests;
 
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Laravel\Passport\PassportServiceProvider;
+use Laravel\Sanctum\SanctumServiceProvider;
 use Moell\Mojito\Models\AdminUser;
 use Moell\Mojito\Providers\MojitoServiceProvider;
 use Moell\Mojito\Tests\Fixtures\Http\Kernel;
@@ -14,6 +16,8 @@ use Spatie\Permission\PermissionServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
+    use ArraySubsetAsserts;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,8 +38,6 @@ abstract class TestCase extends BaseTestCase
             'prefix'   => '',
         ]);
 
-        $this->setAuthConfigs();
-
         $this->setMojitoConfigs();
 
         $this->setPermissionConfigs();
@@ -44,10 +46,9 @@ abstract class TestCase extends BaseTestCase
     protected function getPackageProviders($app)
     {
         return [
-            PassportServiceProvider::class,
-            MultiauthServiceProvider::class,
             PermissionServiceProvider::class,
-            MojitoServiceProvider::class
+            MojitoServiceProvider::class,
+            SanctumServiceProvider::class
         ];
     }
 
@@ -56,23 +57,18 @@ abstract class TestCase extends BaseTestCase
         $app->singleton('Illuminate\Contracts\Http\Kernel', Kernel::class);
     }
 
-    protected function setAuthConfigs()
-    {
-        config(['auth.guards.admin.driver' => 'passport']);
-        config(['auth.guards.admin.provider' => 'admin']);
-        config(['auth.providers.admin.driver' => 'eloquent']);
-        config(['auth.providers.admin.model' => AdminUser::class]);
-    }
-
     protected function setMojitoConfigs()
     {
         config(['mojito' => [
-            'passport_token_ttl' => 1,
-            'passport_refresh_token_ttl' => 7,
-            'super_admin' => [
-                'provider' => 'admin',
-                'auth' => 'auth:admin',
-                'guard' => 'admin'
+            'admin_route_path' => env('ADMIN_ROUTE_PATH', 'admin'),
+
+            'providers' => [
+                'admin' => [
+                    'model' => \Moell\Mojito\Models\AdminUser::class,
+                    'login_fields' => [
+                        'email'
+                    ]
+                ]
             ]
         ]]);
     }

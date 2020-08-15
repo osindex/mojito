@@ -13,7 +13,7 @@
         <div class="avatar">
           <el-dropdown>
             <el-button :plain="true">
-              <img src="https://via.placeholder.com/30x30" width="30" height="30" style="border-radius:30px">
+              <i class="el-icon-user-solid"></i>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
@@ -88,7 +88,7 @@
         rules: {
           old_password: [
             { required: true },
-            { min: 8, max: 32 }
+            { min: 6, max: 32 }
           ],
           password: [
             { required: true },

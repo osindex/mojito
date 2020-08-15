@@ -128,18 +128,8 @@ class MojitoTableSeeder extends Seeder
             'pg_id' => 3,
         ],
         [
-            'name' => 'permission.all-user-permission',
-            'display_name' => 'All permissions of the user',
-            'pg_id' => 3,
-        ],
-        [
             'name' => 'menu.index',
             'display_name' => 'index',
-            'pg_id' => 4,
-        ],
-        [
-            'name' => 'menu.my',
-            'display_name' => 'My menu',
             'pg_id' => 4,
         ],
         [
@@ -248,7 +238,7 @@ class MojitoTableSeeder extends Seeder
         Permission::query()->delete();
 
         foreach ($this->permissions as $permission) {
-            $permission['guard_name'] = config('mojito.super_admin.guard');
+            $permission['guard_name'] = 'admin';
             Permission::create($permission);
         }
     }
@@ -287,7 +277,7 @@ class MojitoTableSeeder extends Seeder
         Role::query()->delete();
         Role::create([
             'name' => 'admin',
-            'guard_name' => config('mojito.super_admin.guard'),
+            'guard_name' => 'admin',
         ]);
     }
 
@@ -301,58 +291,58 @@ class MojitoTableSeeder extends Seeder
             [
                 'id' => 1,
                 'parent_id' => 0,
-                'uri' => '/dashboard',
+                'uri' => '/admin/dashboard',
                 'name' => trans('mojito.Dashboard'),
                 'icon' => 'mofont mo-icon-dashboard mo-menu',
-                'guard_name' => config('mojito.super_admin.guard'),
+                'guard_name' => 'admin',
             ],
             [
                 'id' => 2,
                 'parent_id' => 0,
-                'uri' => '/admin',
+                'uri' => '/admin/admin',
                 'name' => trans('mojito.Admin'),
                 'icon' => 'mofont mo-icon-admin mo-menu',
-                'guard_name' => config('mojito.super_admin.guard'),
+                'guard_name' => 'admin',
             ],
             [
                 'id' => 3,
                 'parent_id' => 2,
-                'uri' => '/admin-user',
+                'uri' => '/admin/admin-user',
                 'name' => trans('mojito.AdminUser'),
                 'icon' => '',
-                'guard_name' => config('mojito.super_admin.guard'),
+                'guard_name' => 'admin',
             ],
             [
                 'id' => 4,
                 'parent_id' => 2,
-                'uri' => '/role',
+                'uri' => '/admin/role',
                 'name' => trans('mojito.Role'),
                 'icon' => '',
-                'guard_name' => config('mojito.super_admin.guard'),
+                'guard_name' => 'admin',
             ],
             [
                 'id' => 5,
                 'parent_id' => 2,
-                'uri' => '/permission',
+                'uri' => '/admin/permission',
                 'name' => trans('mojito.Permission'),
                 'icon' => '',
-                'guard_name' => config('mojito.super_admin.guard'),
+                'guard_name' => 'admin',
             ],
             [
                 'id' => 6,
                 'parent_id' => 2,
-                'uri' => '/permission-group',
+                'uri' => '/admin/permission-group',
                 'name' => trans('mojito.PermissionGroup'),
                 'icon' => '',
-                'guard_name' => config('mojito.super_admin.guard'),
+                'guard_name' => 'admin',
             ],
             [
                 'id' => 7,
                 'parent_id' => 2,
-                'uri' => '/menu',
+                'uri' => '/admin/menu',
                 'name' => trans('mojito.Menu'),
                 'icon' => '',
-                'guard_name' => config('mojito.super_admin.guard'),
+                'guard_name' => 'admin',
             ],
 
         ]);

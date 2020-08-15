@@ -59,7 +59,7 @@ class AdminUserControllerTest extends FeatureTestCase
     {
         $adminUser = AdminUser::first();
 
-        $response = $this->get(route('admin-user.show', ['admin-user' => $adminUser->id]));
+        $response = $this->get(route('admin-user.show', ['admin_user' => $adminUser->id]));
 
         $response->assertJson([
             'data' => [
@@ -91,7 +91,7 @@ class AdminUserControllerTest extends FeatureTestCase
     {
         $adminUser = AdminUser::first();
 
-        $response = $this->delete(route('admin-user.destroy', ['admin-user' => $adminUser->id]), [], $this->jsonHeader());
+        $response = $this->delete(route('admin-user.destroy', ['admin_user' => $adminUser->id]), [], $this->jsonHeader());
         $response->assertStatus(204);
 
         $this->assertCount(0, $adminUser->roles);
@@ -102,7 +102,7 @@ class AdminUserControllerTest extends FeatureTestCase
     {
         $adminUser = AdminUser::first();
 
-        $route = route('admin-user.roles', ['id' => $adminUser->id, 'provider' => config('mojito.super_admin.provider')]);
+        $route = route('admin-user.roles', ['id' => $adminUser->id, 'provider' => 'admin']);
         $response = $this->get($route, $this->jsonHeader());
 
         $data = [];
@@ -120,7 +120,7 @@ class AdminUserControllerTest extends FeatureTestCase
     {
         $adminUser = AdminUser::first();
 
-        $route = route('admin-user.roles', ['id' => $adminUser->id, 'provider' => config('mojito.super_admin.provider')]);
+        $route = route('admin-user.roles', ['id' => $adminUser->id, 'provider' => 'admin']);
         $response = $this->put($route, ['roles' => []], $this->jsonHeader());
 
         $response->assertStatus(204);
