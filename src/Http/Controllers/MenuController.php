@@ -94,7 +94,7 @@ class MenuController extends Controller
             $pg_id = optional(Permission::where('name', 'like', $comNameArray[0] . '%')->first())->pg_id;
         }
         $permission = [
-            'guard_name' => config('mojito.super_admin.guard'),
+            'guard_name' => $request->get('guard_name', 'admin'),
             'name' => $permission_name,
             'display_name' => $menu->name,
             'icon' => $menu->icon,
