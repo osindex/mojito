@@ -10,8 +10,8 @@ import adminLogin from '../views/admin/login/routes'
 export default [
   {
     name: 'adminMain',
-    path: '/',
-    redirect: '/dashboard',
+    path: '/admin',
+    redirect: '/admin/dashboard',
     meta: {
       provider: 'admin',
       title: 'home',

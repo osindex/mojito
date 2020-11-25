@@ -1,8 +1,29 @@
 <?php
-use Illuminate\Support\Str;
-if (!function_exists('recodeFile')) {
-    function recodeFile($path, $avoid = [], $replace = [], $to = null, $append = null, $avoidFunc = null)
+if (!function_exists('inputFile')) {
+    function inputFile($path, $content, $type = 'w+')
     {
+        $fp = new SplFileObject($path, $type);
+        if (!is_string($content)) {
+            $content = json_decode($content);
+        }
+        $fp->fwrite($content);
+        $fp = null;
+    }
+}
+if (!function_exists('recodeFile')) {
+    /**
+     *
+     * @param string $path 扫描的文件路径
+     * @param array $avoid  指定搜索某些值
+     * @param array $replace 数组，替换下标为0的的字符为下标为1的内容()
+     * @param null $to  要写入的文件路径
+     * @param null $append  追加的内容
+     * @param Closure $avoidFunc 在某行中搜索到avoid的值后执行的方法，返回数据将替换avoid内容所在行 与avoid参数对应
+     * @return string 返回文本处理后的结果
+     */
+    function recodeFile($path, $avoid = [], $replace = [], $to = null, $append = null, Closure $avoidFunc = null)
+    {
+        // 声明结果
         $content = '';
         if (file_exists($path)) {
             $fp = new SplFileObject($path, 'r+');
@@ -19,11 +40,11 @@ if (!function_exists('recodeFile')) {
                 if (count($replace)) {
                     $content = Str::replaceArray($replace[0], $replace[1], $content);
                 }
-                if ($to) {
-                    $fp = new SplFileObject($to, 'w+');
-                    $fp->fwrite(rtrim($content) . $append);
+                if (!is_null($to)) {
+                    inputFile($to, rtrim($content) . $append);
                 }
             }
+            $fp = null;
         }
         return $content;
     }

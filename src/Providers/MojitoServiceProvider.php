@@ -4,6 +4,7 @@ namespace Moell\Mojito\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Moell\Mojito\Console\InstallCommand;
+use Moell\Mojito\Console\UninstallCommand;
 
 class MojitoServiceProvider extends ServiceProvider
 {
@@ -15,10 +16,10 @@ class MojitoServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->registerMigrations();
 
             $this->commands([
                 InstallCommand::class,
+                UninstallCommand::class,
             ]);
 
             $this->publishes([
@@ -55,35 +56,6 @@ class MojitoServiceProvider extends ServiceProvider
     public function register()
     {
         //
-    }
-
-    private function registerMigrations()
-    {
-        $migrationsPath = __DIR__ . '/../../database/migrations/';
-
-        $items = [
-            'create_admin_table.php',
-            'add_custom_field_permission_tables.php',
-            'create_menu_table.php',
-            'create_permission_group_table.php',
-            'create_role_menu_table.php',
-        ];
-
-        $paths = [];
-        foreach ($items as $key => $name) {
-            $paths[$migrationsPath . $name] = database_path('migrations') . "/" . $this->formatTimestamp($key + 1) . '_' . $name;
-        }
-
-        $this->publishes($paths, 'migrations');
-    }
-
-    /**
-     * @param $addition
-     * @return false|string
-     */
-    private function formatTimestamp($addition)
-    {
-        return date('Y_m_d_His', time() + $addition);
     }
 
     /**

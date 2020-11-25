@@ -27,6 +27,13 @@ $router->namespace('\Moell\Mojito\Http\Controllers')
             $router->get('role/{id}/permissions', 'RoleController@permissions')->name('role.permissions');
             $router->put('role/{id}/permissions', 'RoleController@assignPermissions')->name('role.assign-permissions');
             $router->get('guard-name-roles/{guardName}', 'RoleController@guardNameRoles')->name('role.guard-name-roles');
+
+            // add by osindex
+            $router->get('role/{id}/menus', 'RoleController@menus')->name('role.menus');
+            $router->put('role/{id}/menus', 'RoleController@assignMenus')->name('role.assign-menus');
+            $router->put('role/{id}/togglemenus', 'RoleController@toggleMenus')->name('role.toggle-menus');
+            // end
+
             $router->get('admin-user/{id}/roles/{provider}', 'AdminUserController@roles')->name('admin-user.roles');
             $router->put('admin-user/{id}/roles/{provider}', 'AdminUserController@assignRoles')->name('admin-user.assign-roles');
             $router->get('guard-name-for-permissions/{guardName}', 'PermissionGroupController@guardNameForPermissions')

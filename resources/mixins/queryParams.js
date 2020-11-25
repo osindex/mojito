@@ -1,4 +1,3 @@
-
 export const queryParams = {
   data() {
     return {

@@ -14,10 +14,14 @@ Mojito 是一个基于 Laravel, Vue, Element UI 构建的后台管理系统。
 
 * 可快速衍生多个后台系统
 * 内置角色，权限，用户，菜单管理
+* 不同角色不同菜单【相对原版增加】
+* 后台添加菜单自动创建前端页面和路由文件【增加】
 * API 权限精确至路由，页面权限精确到按钮或链接
 * 完善的PHPUnit测试
 * 前后端分离
 * 多标签页
+
+# 搭配avue + osi/laravel-controller-trait 使用效果更佳
 
 ## 要求
 
@@ -29,18 +33,24 @@ Mojito 是一个基于 Laravel, Vue, Element UI 构建的后台管理系统。
 
 首先安装laravel,并且确保你配置了正确的数据库连接。
 
-vcs:
+配置vcs:
 ```
     "repositories": [{
         "type": "vcs",
         "url": "https://github.com/osindex/mojito.git"
     }]
 ```
+composer 安装当前仓库版本
+```
+composer require "moell/mojito":"dev-mix"
+```
 
 然后运行下面的命令来发布资源:
 
 ```
-php artisan mojito:install
+php artisan admin:install
+#卸载使用
+#php artisan admin:uninstall
 ```
 
 命令执行成功会生成配置文件，数据迁移和构建SPA的文件。
@@ -65,11 +75,9 @@ class Kernel extends HttpKernel
 }
 ```
 
-执行数据迁移，数据填充
+执行数据填充
 
 ```
-php artisan migrate
-
 php artisan db:seed --class="Moell\Mojito\Database\MojitoTableSeeder"
 ```
 
@@ -95,7 +103,7 @@ npm run production
 ```
 Log in
 
-url: http://localhost/mojito#/admin/login
+url: http://localhost/admin/login
 
 email: admin@admin.com
 

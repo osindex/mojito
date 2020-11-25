@@ -9,9 +9,11 @@
     <el-table
       v-loading="loading"
       :data="tableListData"
-      :row-style="toggleDisplayTr"
+      row-key="id"
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       border
       stripe
+      default-expand-all
       class="init_table"
     >
       <el-table-column
@@ -19,20 +21,12 @@
         min-width="160"
         show-overflow-tooltip
         align="left"
+        prop="name"
       >
-        <template slot-scope="scope">
-          <p :style="`margin-left: ${scope.row.__level * 20}px;margin-top:0;margin-bottom:0`"><i class="permission_toggleFold" :class="toggleFoldingClass(scope.row)" @click="toggleFoldingStatus(scope.row)" />
-            <el-tooltip class="item" :disabled="!scope.row.description" effect="dark" :content="scope.row.description" placement="right-start">
-              <span>
-                {{ scope.row.name }}
-              </span>
-            </el-tooltip>
-          </p>
-        </template>
       </el-table-column>
       <el-table-column
         prop="uri"
-        label="Router"
+        :label="$t('router')"
       />
       <el-table-column
         prop="permission_name"
@@ -113,54 +107,28 @@ export default {
     this.requestData()
   },
   methods: {
-    // Author: zyx <https://github.com/no-simple/vue-tree-table>
-    toggleFoldingStatus(params) {
-      this.foldList.includes(params.__identity) ? this.foldList.splice(this.foldList.indexOf(params.__identity), 1) : this.foldList.push(params.__identity)
-    },
-
-    // Author: zyx <https://github.com/no-simple/vue-tree-table>
-    toggleDisplayTr({ row, index }) {
-      for (let i = 0; i < this.foldList.length; i++) {
-        const item = this.foldList[i]
-        if (row.__family.includes(item) && row.__identity !== item) return 'display:none;'
-      }
-      return ''
-    },
-
-    // Author: zyx <https://github.com/no-simple/vue-tree-table>
-    toggleFoldingClass(params) {
-      return params.children.length === 0 ? 'permission_placeholder' : (this.foldList.indexOf(params.__identity) === -1 ? 'iconfont el-icon-minus' : 'iconfont el-icon-plus')
-    },
-
-    // Author: zyx <https://github.com/no-simple/vue-tree-table>
-    formatConversion(parent, children, index = 0, family = [], elderIdentity = 'x') {
-      if (children.length > 0) {
-        children.map((x, i) => {
-          Vue.set(x, '__level', index)
-          Vue.set(x, '__family', [...family, elderIdentity + '_' + i])
-          Vue.set(x, '__identity', elderIdentity + '_' + i)
-          x.assigned = this.roleMenus.includes(x.id)
-          parent.push(x)
-          if (!x.hasOwnProperty('children')) {
-            x.children = []
-          }
-          if (x.children.length > 0) this.formatConversion(parent, x.children, index + 1, [...family, elderIdentity + '_' + i], elderIdentity + '_' + i)
-        })
-      } return parent
-    },
     requestData() {
       this.loading = true
       const getMenuLists = getMenuList(this.queryParams)
-      // .then(response => {
-      //   this.tableListData = this.formatConversion([], response.data)
-      //   this.loading = false
-      // })
       const roleMenus = roleMenu(this.$route.params.id)
       Promise.all([getMenuLists, roleMenus]).then(result => {
-        this.roleMenus = result[1].data
-        this.tableListData = this.formatConversion([], result[0].data)
+        this.roleMenus = result[1].data.data
+        this.tableListData = this.setAssigned(result[0].data.data)
         this.loading = false
       })
+    },
+    setAssigned(arr) {
+      arr.map(x=>{
+        x.assigned = this.roleMenus.includes(x.id)
+        if (!x.hasOwnProperty('children')) {
+          x.children = []
+        }
+        if (x.children.length > 0){
+          x.children = this.setAssigned(x.children)
+        }
+        return x
+      })
+      return arr
     },
     toggleMenusFunc(row, bool) {
       roleToggleMenu(this.$route.params.id, [row.id]).then(response=>{

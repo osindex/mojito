@@ -2,7 +2,7 @@
 
 namespace Moell\Mojito\Http\Controllers;
 
-use Auth;
+use Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Moell\Mojito\Http\Requests\Menu\CreateOrUpdateRequest;
@@ -19,8 +19,12 @@ class MenuController extends Controller
      */
     public function index(Request $request)
     {
+        $searchName = $request->input('name');
         $menus = Menu::query()
             ->where('guard_name', $request->input('guard_name', 'admin'))
+            ->when($searchName, function ($q) use ($searchName) {
+                $q->where('name', 'like', $searchName);
+            })
             ->orderBy('sequence', 'desc')
             ->get();
 

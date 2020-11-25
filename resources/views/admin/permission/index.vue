@@ -7,7 +7,7 @@
       <el-form-item :label="$t('permissionGroup')">
         <permission-group-select :nowValue.sync="queryParams.pg_id"></permission-group-select>
       </el-form-item>
-      <el-form-item :label="$t('guardName')">
+      <el-form-item v-if="showGuard" :label="$t('guardName')">
         <guard-select :nowValue.sync="queryParams.guard_name"></guard-select>
       </el-form-item>
       <el-form-item>
@@ -29,6 +29,7 @@
               :label="$t('displayName')">
       </el-table-column>
       <el-table-column
+              v-if="showGuard"
               prop="guard_name"
               :label="$t('guardName')">
       </el-table-column>
@@ -37,11 +38,8 @@
               :label="$t('permissionGroup')">
       </el-table-column>
       <el-table-column
-              align="center"
+              prop="icon"
               :label="$t('icon')">
-        <template slot-scope="scope">
-          <i :class="scope.row.icon"></i>
-        </template>
       </el-table-column>
       <el-table-column
               fixed="right"
@@ -85,7 +83,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item :label="$t('guardName')" prop="guard_name" :label-width="formLabelWidth">
-              <guard-select :nowValue.sync="addForm.guard_name"></guard-select>
+              <guard-select :disabled="!showGuard" :nowValue.sync="addForm.guard_name"></guard-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -133,7 +131,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item :label="$t('guardName')" prop="guard_name" :label-width="formLabelWidth">
-              <guard-select :nowValue.sync="editForm.guard_name"></guard-select>
+              <guard-select :disabled="!showGuard" :nowValue.sync="editForm.guard_name"></guard-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -145,7 +143,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item :label="$t('icon')" prop="icon" :label-width="formLabelWidth">
-              <select-icon v-model="editForm.icon" />
+            <select-icon v-model="editForm.icon" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -167,12 +165,12 @@
 </template>
 
 <script>
+  import SelectIcon from '../../../components/Select/SelectIcon'
   import { getPermissionList, addPermission, editPermission, deletePermission } from '../../../api/permission'
   import { responseDataFormat, tableDefaultData, editSuccess, addSuccess, deleteSuccess } from '../../../libs/tableDataHandle'
   import GuardSelect from '../../../components/Select/Guard'
-  import SelectIcon from '../../../components/Select/SelectIcon'
   import PermissionGroupSelect from "../../../components/Select/PermissionGroup";
-  import { hasPermission } from "../../../libs/permission"
+  import { hasPermission, showGuard, defaultGuard } from "../../../libs/permission"
   import { queryParams } from "../../../mixins/queryParams"
 
   export default {
@@ -184,9 +182,10 @@
     data() {
       return {
         ...tableDefaultData(),
+        showGuard: showGuard(),
         addForm: {
           name: '',
-          guard_name: '',
+          guard_name: defaultGuard(),
           description: '',
           sequence:0,
         },
@@ -205,7 +204,7 @@
             { min: 1, max: 255 }
           ],
           guard_name: [
-            { required: true },
+            { required: showGuard() },
             { min: 1, max: 255 }
           ],
           pg_id: [

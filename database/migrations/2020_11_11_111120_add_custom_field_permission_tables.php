@@ -40,12 +40,7 @@ class AddCustomFieldPermissionTables extends Migration
         $tableNames = config('permission.table_names');
 
         Schema::table($tableNames['permissions'], function (Blueprint $table) {
-            $table->dropColumn('display_name');
-            $table->dropColumn('icon');
-            $table->dropColumn('sequence');
-            $table->dropColumn('created_name');
-            $table->dropColumn('updated_name');
-            $table->dropColumn('description');
+            $table->dropColumn('pg_id', 'display_name', 'icon', 'sequence', 'created_name', 'updated_name', 'description');
         });
 
         Schema::table($tableNames['roles'], function (Blueprint $table) {

@@ -11,13 +11,13 @@ export default {
       abbrName: process.env.MIX_APP_ABBR_NAME || 'admin'
     },
 
-    locale: process.env.MIX_APP_LOCALE || 'en'
+    locale: 'en'
   },
-
   guardNames: [
     {
       label: 'admin',
-      value: 'admin'
+      value: 'admin',
+      default: true
     }
   ],
 

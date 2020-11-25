@@ -19,6 +19,7 @@
               :label="$t('name')">
       </el-table-column>
       <el-table-column
+              v-if="showGuard"
               prop="guard_name"
               :label="$t('guardName')">
       </el-table-column>
@@ -51,8 +52,9 @@
           </router-link>
           <router-link :to="{ name: 'roleMenu', params: {id: scope.row.id, guardName: scope.row.guard_name}}">
             <el-button
-                    v-if="assignMenu"
-                    size="mini">{{ $t('assignMenu') }}</el-button>
+              v-if="assignMenu"
+              size="mini"
+            >{{ $t('assignMenu') }}</el-button>
           </router-link>
           <el-button
                   v-if="deletePermission"
@@ -75,7 +77,7 @@
         <el-form-item :label="$t('name')" prop="name" :label-width="formLabelWidth">
           <el-input v-model="addForm.name"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('guardName')" prop="guard_name" :label-width="formLabelWidth">
+        <el-form-item v-show="showGuard" :label="$t('guardName')" prop="guard_name" :label-width="formLabelWidth">
           <guard-select :nowValue.sync="addForm.guard_name"></guard-select>
         </el-form-item>
         <el-form-item :label="$t('description')" prop="description" :label-width="formLabelWidth">
@@ -93,7 +95,7 @@
         <el-form-item :label="$t('name')" prop="name" :label-width="formLabelWidth">
           <el-input v-model="editForm.name"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('guardName')" prop="guard_name" :label-width="formLabelWidth">
+        <el-form-item v-show="showGuard" :label="$t('guardName')" prop="guard_name" :label-width="formLabelWidth">
           <guard-select :nowValue.sync="editForm.guard_name"></guard-select>
         </el-form-item>
         <el-form-item :label="$t('description')" prop="description" :label-width="formLabelWidth">
@@ -111,10 +113,9 @@
 <script>
   import { getRoleList, addRole, editRole, deleteRole } from '../../../api/role'
   import { responseDataFormat, tableDefaultData, editSuccess, addSuccess, deleteSuccess } from '../../../libs/tableDataHandle'
-  import { hasPermission } from '../../../libs/permission'
+  import { hasPermission, showGuard, defaultGuard } from '../../../libs/permission'
   import GuardSelect from '../../../components/Select/Guard'
-  import queryParams from '@/mixins/queryParams'
-
+  import { queryParams } from "../../../mixins/queryParams"
 
   export default {
     name: 'roleIndex',
@@ -125,9 +126,10 @@
     data() {
       return {
         ...tableDefaultData(),
+        showGuard: showGuard(),
         addForm: {
           name: '',
-          guard_name: '',
+          guard_name: defaultGuard(),
           description: ''
         },
         editForm: {

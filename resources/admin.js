@@ -17,8 +17,8 @@ Vue.use(ElementUI, {
 
 Vue.prototype.$config = config
 Vue.prototype.$provider = 'admin'
-i18n.locale = config[Vue.prototype.$provider].locale ? config[Vue.prototype.$provider].locale : 'en'
-
+// i18n.locale = config[Vue.prototype.$provider].locale ? config[Vue.prototype.$provider].locale : 'en'
+i18n.locale = 'zh'
 /* eslint-disable no-new */
 const app = new Vue({
   el: '#app',
