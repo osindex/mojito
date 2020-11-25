@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Moell\Mojito\Http\Requests\Menu\CreateOrUpdateRequest;
 use Moell\Mojito\Models\Menu;
+use Moell\Mojito\Models\Permission;
 use Moell\Mojito\Models\PermissionGroup;
 use Moell\Mojito\Resources\Menu as MenuResource;
 
