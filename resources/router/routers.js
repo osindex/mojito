@@ -1,5 +1,7 @@
 import Admin from '../views/admin/main/index'
 import adminUser from '../views/admin/user/routes'
+import proxy from './proxy'
+
 import role from '../views/admin/role/routes'
 import permission from '../views/admin/permission/routes'
 import permissionGroup from '../views/admin/permission-group/routes'
@@ -18,6 +20,7 @@ export default [
     },
     component: Admin,
     children: [
+      proxy,
       ...adminDashboard, ...adminUser, ...role, ...permission, ...permissionGroup, ...menu
     ]
   },

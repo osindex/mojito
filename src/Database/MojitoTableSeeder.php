@@ -55,6 +55,13 @@ class MojitoTableSeeder extends Seeder
             'pg_id' => 1,
         ],
         [
+            'name' => 'system.dialog',
+            'display_name' => 'dialog permission',
+            'sequence' => 0,
+            'pg_id' => 1,
+        ],
+
+        [
             'name' => 'role.index',
             'display_name' => 'index',
             'sequence' => 0,
