@@ -56,6 +56,7 @@ export default {
   selectAll: '全选',
   unselectAll: '全不选',
   changePassword: '修改密码',
+  logout: '退出',
   yes: '是',
   no: '否',
   done: '完成',

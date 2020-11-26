@@ -56,6 +56,7 @@ export default {
   selectAll: 'Select all',
   unselectAll: 'Unselect all',
   changePassword: 'Change password',
+  logout: 'Logout',
   yes: 'Yes',
   no: 'No',
   done: 'done',
