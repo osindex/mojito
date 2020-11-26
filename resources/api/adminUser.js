@@ -1,5 +1,11 @@
 import http from '../libs/http'
 
+export const getAdminMe = (params) => {
+  return http.get('/api/admin-me', {
+    params
+  })
+}
+
 export const getAdminUserList = (params) => {
   return http.get('/api/admin-user', {
     params
