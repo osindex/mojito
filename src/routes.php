@@ -29,7 +29,7 @@ $router->namespace('\Moell\Mojito\Http\Controllers')
             $router->get('guard-name-roles/{guardName}', 'RoleController@guardNameRoles')->name('role.guard-name-roles');
 
             // add by osindex
-            $router->get('admin-me', 'AdminUserController@me')->name('admin.me');
+            $router->get('admin-me', 'AdminUserController@me')->name('admin-user.me');
 
             $router->get('role/{id}/menus', 'RoleController@menus')->name('role.menus');
             $router->put('role/{id}/menus', 'RoleController@assignMenus')->name('role.assign-menus');
