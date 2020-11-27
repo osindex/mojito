@@ -18,6 +18,11 @@ export default {
     closeRight: 'Close right',
     closeOther: 'Close other',
   },
+  login: {
+    title: 'Admin Login',
+    submit: 'Submit',
+    reset: 'Reset'
+  },
   name: 'Name',
   email: 'Email',
   search: 'Search',
@@ -27,6 +32,7 @@ export default {
   edit: 'Edit',
   delete: 'Delete',
   add: 'Add',
+  username: 'username/email',
   password: 'Password',
   oldPassword: 'Old password',
   confirmPassword: 'Confirm password',

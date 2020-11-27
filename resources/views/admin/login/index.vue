@@ -2,15 +2,15 @@
   <div id="login">
     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="login-container">
       <h2>{{$t('login.title')}}</h2>
-      <el-form-item label="Username" prop="username">
+      <el-form-item :label="$t('username')" prop="username">
         <el-input  v-model="ruleForm.username" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="Password" prop="password">
-        <el-input type="Password" v-model="ruleForm.password" auto-complete="off"></el-input>
+      <el-form-item :label="$t('password')" prop="password">
+        <el-input type="password" v-model="ruleForm.password" auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" plain @click="submitForm('ruleForm')">Submit</el-button>
-        <el-button plain @click="resetForm('ruleForm')">Reset</el-button>
+        <el-button type="primary" plain @click="submitForm('ruleForm')">{{$t('login.submit')}}</el-button>
+        <el-button plain @click="resetForm('ruleForm')">{{$t('login.reset')}}</el-button>
       </el-form-item>
     </el-form>
   </div>
