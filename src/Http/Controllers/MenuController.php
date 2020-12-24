@@ -10,6 +10,7 @@ use Moell\Mojito\Models\Menu;
 use Moell\Mojito\Models\Permission;
 use Moell\Mojito\Models\PermissionGroup;
 use Moell\Mojito\Resources\Menu as MenuResource;
+use Str;
 
 class MenuController extends Controller
 {
@@ -51,6 +52,8 @@ class MenuController extends Controller
         $comName = Arr::last($comNameArray);
         $permission_name = $menu->permission_name ?: $comName . ".index";
 
+        $camelComName = Str::camel($comName);
+
         // create new files
         $toRoutes = resource_path('js/views/admin/' . $folder . '/routes.js');
         if (!file_exists($toRoutes)) {
@@ -58,7 +61,7 @@ class MenuController extends Controller
                 return "      permission: '" . $permission_name . "'" . PHP_EOL;
             };
             $compRoutes = resource_path('js/views/admin/example/routes.js');
-            recodeFile($compRoutes, 'example.index', ["example", [$comName, $folder, $comName]], $toRoutes, null, $closureCom);
+            recodeFile($compRoutes, 'example.index', ["example", [$comName, $camelComName, $comName]], $toRoutes, null, $closureCom);
         }
         $tovueFile = resource_path('js/views/admin/' . $folder . '/index.vue');
         if (!file_exists($tovueFile)) {
@@ -68,8 +71,8 @@ class MenuController extends Controller
 
         $langFile = resource_path('js/lang/' . config('app.locale') . '.js');
         $langFileContent = recodeFile($langFile);
-        $insertLang = '            ' . $comName . ": '" . $menu->name . "'," . PHP_EOL;
-        if (strpos($langFileContent, '            ' . $comName . ": '") === false) {
+        $insertLang = '            ' . $camelComName . ": '" . $menu->name . "'," . PHP_EOL;
+        if (strpos($langFileContent, '            ' . $camelComName . ": '") === false) {
             $closureLang = function ($line) use ($insertLang) {
                 return $line . $insertLang;
             };
@@ -78,12 +81,12 @@ class MenuController extends Controller
         // change baseRoute
         $baseRoutes = resource_path('js/router/routers.js');
         $baseRoutesFileContent = recodeFile($baseRoutes);
-        if (strpos($baseRoutesFileContent, "import " . $comName . " from") === false) {
+        if (strpos($baseRoutesFileContent, "import " . $camelComName . " from") === false) {
             // callback
-            $closure = function ($line) use ($comName) {
-                return rtrim($line, PHP_EOL) . ', ...' . $comName . PHP_EOL;
+            $closure = function ($line) use ($camelComName) {
+                return rtrim($line, PHP_EOL) . ', ...' . $camelComName . PHP_EOL;
             };
-            recodeFile($baseRoutes, ['...adminDashboard'], ["import adminDashboard from '../views/admin/dashboard/routes'", ["import adminDashboard from '../views/admin/dashboard/routes'" . PHP_EOL . "import " . $comName . " from '../views/admin/" . $folder . "/routes'"]], $baseRoutes, null, $closure);
+            recodeFile($baseRoutes, ['...adminDashboard'], ["import adminDashboard from '../views/admin/dashboard/routes'", ["import adminDashboard from '../views/admin/dashboard/routes'" . PHP_EOL . "import " . $camelComName . " from '../views/admin/" . $folder . "/routes'"]], $baseRoutes, null, $closure);
         }
         // auto permission
         $pg_id = 0;
