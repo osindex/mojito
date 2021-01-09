@@ -4,6 +4,7 @@ namespace Moell\Mojito\Http\Controllers;
 
 use Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Moell\Mojito\Http\Requests\Menu\CreateOrUpdateRequest;
 use Moell\Mojito\Models\Menu;
@@ -39,75 +40,83 @@ class MenuController extends Controller
      */
     public function store(CreateOrUpdateRequest $request)
     {
+
         $menu = Menu::create($request->all());
-        $folder = ltrim($menu->uri, '/');
-        // mkdir
-        $dir = resource_path('js/views/admin/' . $folder);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
 
-        // get component name
-        $comNameArray = explode("/", $folder);
-        $comName = Arr::last($comNameArray);
-        $permission_name = $menu->permission_name ?: $comName . ".index";
+        if (App::environment('local')) {
+            // if is local
+            $folder = ltrim($menu->uri, '/');
+            // mkdir
+            $dir = resource_path('js/views/admin/' . $folder);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
 
-        $camelComName = Str::camel($comName);
+            // get component name
+            $comNameArray = explode("/", $folder);
+            $comName = Arr::last($comNameArray);
+            $permission_name = $menu->permission_name ?: $comName . ".index";
 
-        // create new files
-        $toRoutes = resource_path('js/views/admin/' . $folder . '/routes.js');
-        if (!file_exists($toRoutes)) {
-            $closureCom = function ($line) use ($permission_name) {
-                return "      permission: '" . $permission_name . "'" . PHP_EOL;
-            };
-            $compRoutes = resource_path('js/views/admin/example/routes.js');
-            recodeFile($compRoutes, 'example.index', ["example", [$comName, $camelComName, $comName]], $toRoutes, null, $closureCom);
-        }
-        $tovueFile = resource_path('js/views/admin/' . $folder . '/index.vue');
-        if (!file_exists($tovueFile)) {
-            $vueFile = resource_path('js/views/admin/example/index.vue');
-            recodeFile($vueFile, null, ["example", [$comName, $comName, $comName, $comName, $comName]], $tovueFile, null, null);
-        }
+            $camelComName = Str::camel($comName);
 
-        $langFile = resource_path('js/lang/' . config('app.locale') . '.js');
-        $langFileContent = recodeFile($langFile);
-        $insertLang = '            ' . $camelComName . ": '" . $menu->name . "'," . PHP_EOL;
-        if (strpos($langFileContent, '            ' . $camelComName . ": '") === false) {
-            $closureLang = function ($line) use ($insertLang) {
-                return $line . $insertLang;
-            };
-            recodeFile($langFile, 'roleAssignPermission', [], $langFile, null, $closureLang);
-        }
-        // change baseRoute
-        $baseRoutes = resource_path('js/router/routers.js');
-        $baseRoutesFileContent = recodeFile($baseRoutes);
-        if (strpos($baseRoutesFileContent, "import " . $camelComName . " from") === false) {
-            // callback
-            $closure = function ($line) use ($camelComName) {
-                return rtrim($line, PHP_EOL) . ', ...' . $camelComName . PHP_EOL;
-            };
-            recodeFile($baseRoutes, ['...adminDashboard'], ["import adminDashboard from '../views/admin/dashboard/routes'", ["import adminDashboard from '../views/admin/dashboard/routes'" . PHP_EOL . "import " . $camelComName . " from '../views/admin/" . $folder . "/routes'"]], $baseRoutes, null, $closure);
-        }
-        // auto permission
-        $pg_id = 0;
-        if ($folder === $comName) {
-            // $pg_id = PermissionGroup::insertGetId(['name' => $comName]);
-            $pg_id = PermissionGroup::firstOrCreate(['name' => $comName])->id;
-        } else {
-            $pg_id = optional(Permission::where('name', 'like', $comNameArray[0] . '%')->first())->pg_id;
-        }
-        $permission = [
-            'guard_name' => $request->get('guard_name', 'admin'),
-            'name' => $permission_name,
-            'display_name' => $menu->name,
-            'icon' => $menu->icon,
-            'pg_id' => $pg_id ?: 1, //if not set 1
-        ];
-        $perm = Permission::updateOrCreate(['name' => $permission_name], $permission);
+            // create new files
+            $toRoutes = resource_path('js/views/admin/' . $folder . '/routes.js');
+            if (!file_exists($toRoutes)) {
+                $closureCom = function ($line) use ($permission_name) {
+                    return "      permission: '" . $permission_name . "'" . PHP_EOL;
+                };
+                $compRoutes = resource_path('js/views/admin/example/routes.js');
+                recodeFile($compRoutes, 'example.index', ["example", [$comName, $camelComName, $comName]], $toRoutes, null, $closureCom);
+            }
+            $tovueFile = resource_path('js/views/admin/' . $folder . '/index.vue');
+            if (!file_exists($tovueFile)) {
+                $vueFile = resource_path('js/views/admin/example/index.vue');
+                recodeFile($vueFile, null, ["example", [$comName, $comName, $comName, $comName, $comName]], $tovueFile, null, null);
+            }
 
-        $role = Auth::user()->roles->first();
-        $role->givePermissionTo($perm);
+            $langFile = resource_path('js/lang/' . config('app.locale') . '.js');
+            $langFileContent = recodeFile($langFile);
+            $insertLang = '            ' . $camelComName . ": '" . $menu->name . "'," . PHP_EOL;
+            if (strpos($langFileContent, '            ' . $camelComName . ": '") === false) {
+                $closureLang = function ($line) use ($insertLang) {
+                    return $line . $insertLang;
+                };
+                recodeFile($langFile, 'roleAssignPermission', [], $langFile, null, $closureLang);
+            }
+            // change baseRoute
+            $baseRoutes = resource_path('js/router/routers.js');
+            $baseRoutesFileContent = recodeFile($baseRoutes);
+            if (strpos($baseRoutesFileContent, "import " . $camelComName . " from") === false) {
+                // callback
+                $closure = function ($line) use ($camelComName) {
+                    return rtrim($line, PHP_EOL) . ', ...' . $camelComName . PHP_EOL;
+                };
+                recodeFile($baseRoutes, ['...adminDashboard'], ["import adminDashboard from '../views/admin/dashboard/routes'", ["import adminDashboard from '../views/admin/dashboard/routes'" . PHP_EOL . "import " . $camelComName . " from '../views/admin/" . $folder . "/routes'"]], $baseRoutes, null, $closure);
+            }
+            // auto permission
+            $pg_id = 0;
+            if ($folder === $comName) {
+                // $pg_id = PermissionGroup::insertGetId(['name' => $comName]);
+                $pg_id = PermissionGroup::firstOrCreate(['name' => $comName])->id;
+            } else {
+                $pg_id = optional(Permission::where('name', 'like', $comNameArray[0] . '%')->first())->pg_id;
+            }
+            $permission = [
+                'guard_name' => $request->get('guard_name', 'admin'),
+                'name' => $permission_name,
+                'display_name' => $menu->name,
+                'icon' => $menu->icon,
+                'pg_id' => $pg_id ?: 1, //if not set 1
+            ];
+            $perm = Permission::updateOrCreate(['name' => $permission_name], $permission);
 
+            $role = Auth::user()->roles->first();
+            $role->givePermissionTo($perm);
+        }
+        if (!isset($role)) {
+            $role = Auth::user()->roles->first();
+        }
+        $role->menus()->syncWithoutDetaching([$menu->id]);
         return $this->created();
     }
 

@@ -136,7 +136,8 @@ class RoleController extends Controller
     {
         $role = Role::query()->findOrFail($id);
 
-        $role->syncPermissions($request->input('menus', []));
+        // 此接口未使用
+        $role->menus()->sync($request->input('menus', []));
 
         return $this->noContent();
     }
