@@ -66,7 +66,7 @@ class MenuController extends Controller
                     return "      permission: '" . $permission_name . "'" . PHP_EOL;
                 };
                 $compRoutes = resource_path('js/views/admin/example/routes.js');
-                recodeFile($compRoutes, 'example.index', ["example", [$comName, $camelComName, $comName]], $toRoutes, null, $closureCom);
+                recodeFile($compRoutes, 'example.index', ["example", [$comName, $comName, $camelComName]], $toRoutes, null, $closureCom);
             }
             $tovueFile = resource_path('js/views/admin/' . $folder . '/index.vue');
             if (!file_exists($tovueFile)) {
